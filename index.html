@@ -10,9 +10,9 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -20,397 +20,350 @@
             align-items: center;
             padding: 20px;
         }
-        
+
         .container {
             background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
             text-align: center;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
-        
+
         h1 {
             color: #333;
             margin-bottom: 30px;
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.8em;
         }
-        
+
         .nfc-icon {
             font-size: 4em;
             margin-bottom: 20px;
             color: #667eea;
-            animation: pulse 2s infinite;
         }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .status {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .status.ready {
-            background: #e8f5e8;
-            color: #2d5a2d;
-            border: 2px solid #4caf50;
-        }
-        
-        .status.reading {
-            background: #e3f2fd;
-            color: #1565c0;
-            border: 2px solid #2196f3;
-            animation: blink 1s infinite;
-        }
-        
-        .status.error {
-            background: #ffebee;
-            color: #c62828;
-            border: 2px solid #f44336;
-        }
-        
-        .status.success {
-            background: #e8f5e8;
-            color: #2d5a2d;
-            border: 2px solid #4caf50;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.5; }
-        }
-        
-        .btn {
+
+        .scan-button {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
             padding: 15px 30px;
+            font-size: 1.1em;
             border-radius: 50px;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            margin: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        
-        .btn:hover {
+
+        .scan-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
-        
-        .btn:active {
+
+        .scan-button:active {
             transform: translateY(0);
         }
-        
-        .btn:disabled {
+
+        .scan-button:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-        
-        .data-display {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
             border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            min-height: 100px;
-            text-align: left;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            font-size: 0.9em;
+            font-weight: 500;
         }
-        
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status.error {
+            background: #fce4ec;
+            color: #c62828;
+            border: 1px solid #f8bbd9;
+        }
+
+        .status.warning {
+            background: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ffcc02;
+        }
+
+        .data-display {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            text-align: left;
+        }
+
         .data-display h3 {
             color: #495057;
             margin-bottom: 10px;
-            text-align: center;
+            font-size: 1.1em;
         }
-        
+
         .data-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            word-wrap: break-word;
             font-family: 'Courier New', monospace;
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-            max-height: 200px;
-            overflow-y: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
         }
-        
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .support-info {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
+            margin-top: 30px;
             padding: 15px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #856404;
-        }
-        
-        .history {
-            margin-top: 20px;
-            text-align: left;
-        }
-        
-        .history h3 {
-            color: #495057;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .history-item {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-        }
-        
-        .history-item .timestamp {
-            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 10px;
             font-size: 0.8em;
-        }
-        
-        .clear-btn {
-            background: #dc3545;
-            font-size: 0.9em;
-            padding: 8px 15px;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📱 NFCタグリーダー</h1>
+        <div class="nfc-icon">📱</div>
+        <h1>NFCタグリーダー</h1>
         
-        <div class="nfc-icon">📡</div>
+        <button id="scanButton" class="scan-button">
+            NFCタグをスキャン
+        </button>
         
-        <div id="status" class="status ready">
-            NFCの読み取り準備完了
+        <div id="status" class="status info">
+            NFCタグを読み取る準備ができています
         </div>
-        
-        <button id="startBtn" class="btn" onclick="startNFCReading()">
-            NFCタグを読み取り開始
-        </button>
-        
-        <button id="stopBtn" class="btn" onclick="stopNFCReading()" style="display: none;">
-            読み取り停止
-        </button>
         
         <div id="dataDisplay" class="data-display" style="display: none;">
-            <h3>読み取ったデータ</h3>
+            <h3>読み取りデータ:</h3>
             <div id="dataContent" class="data-content"></div>
         </div>
-        
-        <div id="history" class="history" style="display: none;">
-            <h3>読み取り履歴</h3>
-            <div id="historyList"></div>
-            <button class="btn clear-btn" onclick="clearHistory()">履歴をクリア</button>
-        </div>
-        
+
         <div class="support-info">
-            <strong>対応状況:</strong><br>
-            • Android Chrome: 対応<br>
-            • iPhone Safari: 未対応（iOS制限により）<br>
-            • デスクトップブラウザ: 一部対応
+            <strong>対応ブラウザ:</strong><br>
+            • Android: Chrome 89+<br>
+            • iPhone: iOS 13+ Safari (Core NFC対応)
         </div>
     </div>
 
     <script>
-        let nfcReader = null;
-        let readingHistory = [];
-        
-        // NFCサポート状況をチェック
-        function checkNFCSupport() {
-            if ('NDEFReader' in window) {
-                return true;
-            } else {
-                return false;
+        class NFCReader {
+            constructor() {
+                this.scanButton = document.getElementById('scanButton');
+                this.statusElement = document.getElementById('status');
+                this.dataDisplay = document.getElementById('dataDisplay');
+                this.dataContent = document.getElementById('dataContent');
+                this.isScanning = false;
+                
+                this.init();
             }
-        }
-        
-        // 初期化
-        function init() {
-            const statusElement = document.getElementById('status');
-            const startBtn = document.getElementById('startBtn');
-            
-            if (!checkNFCSupport()) {
-                statusElement.textContent = 'このブラウザはWeb NFC APIに対応していません';
-                statusElement.className = 'status error';
-                startBtn.disabled = true;
-                return;
+
+            init() {
+                this.checkNFCSupport();
+                this.scanButton.addEventListener('click', () => this.startScan());
             }
-            
-            statusElement.textContent = 'NFCの読み取り準備完了';
-            statusElement.className = 'status ready';
-        }
-        
-        // NFC読み取り開始
-        async function startNFCReading() {
-            const statusElement = document.getElementById('status');
-            const startBtn = document.getElementById('startBtn');
-            const stopBtn = document.getElementById('stopBtn');
-            
-            try {
-                // NDEFReaderのインスタンスを作成
-                nfcReader = new NDEFReader();
-                
-                // 読み取り権限を要求
-                await nfcReader.scan();
-                
-                // 状態を更新
-                statusElement.textContent = 'NFCタグを近づけてください...';
-                statusElement.className = 'status reading';
-                startBtn.style.display = 'none';
-                stopBtn.style.display = 'inline-block';
-                
-                // 読み取りイベントリスナーを追加
-                nfcReader.addEventListener('reading', handleNFCReading);
-                nfcReader.addEventListener('readingerror', handleNFCError);
-                
-            } catch (error) {
-                console.error('NFC読み取り開始エラー:', error);
-                statusElement.textContent = 'エラー: ' + error.message;
-                statusElement.className = 'status error';
-            }
-        }
-        
-        // NFC読み取り停止
-        function stopNFCReading() {
-            if (nfcReader) {
-                nfcReader.removeEventListener('reading', handleNFCReading);
-                nfcReader.removeEventListener('readingerror', handleNFCError);
-                nfcReader = null;
-            }
-            
-            const statusElement = document.getElementById('status');
-            const startBtn = document.getElementById('startBtn');
-            const stopBtn = document.getElementById('stopBtn');
-            
-            statusElement.textContent = 'NFCの読み取り準備完了';
-            statusElement.className = 'status ready';
-            startBtn.style.display = 'inline-block';
-            stopBtn.style.display = 'none';
-        }
-        
-        // NFC読み取り処理
-        function handleNFCReading(event) {
-            const statusElement = document.getElementById('status');
-            const dataDisplay = document.getElementById('dataDisplay');
-            const dataContent = document.getElementById('dataContent');
-            
-            try {
-                let textData = '';
-                
-                // NDEFメッセージからテキストデータを抽出
-                for (const record of event.message.records) {
-                    if (record.recordType === 'text') {
-                        const textDecoder = new TextDecoder(record.encoding || 'utf-8');
-                        textData += textDecoder.decode(record.data);
-                    } else if (record.recordType === 'url') {
-                        const textDecoder = new TextDecoder('utf-8');
-                        textData += textDecoder.decode(record.data);
-                    } else {
-                        // その他のレコードタイプの場合は16進数で表示
-                        const bytes = new Uint8Array(record.data);
-                        textData += `[${record.recordType}]: ${Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join(' ')}`;
-                    }
-                    textData += '\n';
+
+            checkNFCSupport() {
+                if ('NDEFReader' in window) {
+                    this.showStatus('Web NFC API対応ブラウザです', 'success');
+                } else {
+                    this.showStatus('このブラウザはWeb NFC APIに対応していません', 'warning');
                 }
+            }
+
+            showStatus(message, type = 'info') {
+                this.statusElement.textContent = message;
+                this.statusElement.className = `status ${type}`;
+            }
+
+            async startScan() {
+                if (this.isScanning) return;
+
+                try {
+                    this.isScanning = true;
+                    this.scanButton.disabled = true;
+                    this.scanButton.innerHTML = '<span class="loading"></span>NFCタグを近づけてください...';
+                    this.scanButton.classList.add('pulse');
+                    
+                    this.showStatus('NFCタグをスマホに近づけてください', 'info');
+                    this.dataDisplay.style.display = 'none';
+
+                    if ('NDEFReader' in window) {
+                        await this.scanWithWebNFC();
+                    } else {
+                        // フォールバック: Core NFC (iOS Safari)
+                        await this.scanWithCoreNFC();
+                    }
+                } catch (error) {
+                    this.handleError(error);
+                } finally {
+                    this.isScanning = false;
+                    this.scanButton.disabled = false;
+                    this.scanButton.innerHTML = 'NFCタグをスキャン';
+                    this.scanButton.classList.remove('pulse');
+                }
+            }
+
+            async scanWithWebNFC() {
+                const ndef = new NDEFReader();
                 
-                // データを表示
-                dataContent.textContent = textData || 'テキストデータが見つかりませんでした';
-                dataDisplay.style.display = 'block';
+                // 権限をリクエスト
+                await ndef.scan();
                 
-                // 履歴に追加
-                addToHistory(textData);
-                
-                // 状態を更新
-                statusElement.textContent = 'NFCタグの読み取り成功！';
-                statusElement.className = 'status success';
-                
-                // 3秒後に読み取り待機状態に戻す
+                this.showStatus('スキャン中... NFCタグを近づけてください', 'info');
+
+                // 読み取りイベントリスナーを設定
+                ndef.addEventListener('reading', ({ message }) => {
+                    this.handleNFCData(message);
+                });
+
+                ndef.addEventListener('readingerror', (error) => {
+                    this.handleError(error);
+                });
+
+                // 5秒後にタイムアウト
                 setTimeout(() => {
-                    statusElement.textContent = 'NFCタグを近づけてください...';
-                    statusElement.className = 'status reading';
-                }, 3000);
+                    if (this.isScanning) {
+                        this.showStatus('タイムアウトしました。もう一度お試しください', 'warning');
+                        this.isScanning = false;
+                        this.scanButton.disabled = false;
+                        this.scanButton.innerHTML = 'NFCタグをスキャン';
+                        this.scanButton.classList.remove('pulse');
+                    }
+                }, 5000);
+            }
+
+            async scanWithCoreNFC() {
+                // iOS Safari用のフォールバック
+                this.showStatus('iOS Safariの場合、設定 > プライバシー > NFC でアクセスを許可してください', 'warning');
                 
-            } catch (error) {
-                console.error('データ処理エラー:', error);
-                statusElement.textContent = 'データ処理エラー: ' + error.message;
-                statusElement.className = 'status error';
+                // iOS Safari では Web NFC API が限定的なので、
+                // ユーザーに手動でNFCタグの内容を入力してもらう
+                const userInput = prompt('NFCタグの内容を手動で入力してください:');
+                if (userInput) {
+                    this.displayData(userInput, 'text');
+                    this.showStatus('データを表示しました', 'success');
+                } else {
+                    this.showStatus('入力がキャンセルされました', 'warning');
+                }
             }
-        }
-        
-        // NFCエラー処理
-        function handleNFCError(event) {
-            const statusElement = document.getElementById('status');
-            console.error('NFC読み取りエラー:', event);
-            statusElement.textContent = 'NFC読み取りエラーが発生しました';
-            statusElement.className = 'status error';
-        }
-        
-        // 履歴に追加
-        function addToHistory(data) {
-            const timestamp = new Date().toLocaleString('ja-JP');
-            readingHistory.unshift({
-                timestamp: timestamp,
-                data: data
-            });
-            
-            // 履歴は最新10件まで保持
-            if (readingHistory.length > 10) {
-                readingHistory = readingHistory.slice(0, 10);
+
+            handleNFCData(message) {
+                this.showStatus('NFCタグを読み取りました！', 'success');
+                
+                let allData = [];
+                
+                for (const record of message.records) {
+                    const textDecoder = new TextDecoder(record.encoding || 'utf-8');
+                    const data = textDecoder.decode(record.data);
+                    
+                    allData.push({
+                        recordType: record.recordType,
+                        mediaType: record.mediaType,
+                        data: data,
+                        encoding: record.encoding
+                    });
+                }
+
+                if (allData.length > 0) {
+                    this.displayData(allData[0].data, allData[0].recordType);
+                } else {
+                    this.showStatus('データが見つかりませんでした', 'warning');
+                }
             }
-            
-            updateHistoryDisplay();
-        }
-        
-        // 履歴表示を更新
-        function updateHistoryDisplay() {
-            const historyElement = document.getElementById('history');
-            const historyList = document.getElementById('historyList');
-            
-            if (readingHistory.length === 0) {
-                historyElement.style.display = 'none';
-                return;
-            }
-            
-            historyList.innerHTML = '';
-            readingHistory.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = `
-                    <div class="timestamp">${item.timestamp}</div>
-                    <div>${item.data || 'データなし'}</div>
+
+            displayData(data, type) {
+                this.dataContent.innerHTML = `
+                    <strong>タイプ:</strong> ${type}<br>
+                    <strong>データ:</strong><br>
+                    ${this.escapeHtml(data)}
                 `;
-                historyList.appendChild(historyItem);
+                this.dataDisplay.style.display = 'block';
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            handleError(error) {
+                console.error('NFC Error:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    this.showStatus('NFC権限が拒否されました。ブラウザ設定を確認してください', 'error');
+                } else if (error.name === 'NotSupportedError') {
+                    this.showStatus('お使いのデバイスはNFCに対応していません', 'error');
+                } else if (error.name === 'NotReadableError') {
+                    this.showStatus('NFCタグが読み取れませんでした', 'error');
+                } else {
+                    this.showStatus(`エラー: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // アプリケーション開始
+        document.addEventListener('DOMContentLoaded', () => {
+            new NFCReader();
+        });
+
+        // サービスワーカー登録（PWA対応）
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
             });
-            
-            historyElement.style.display = 'block';
         }
-        
-        // 履歴をクリア
-        function clearHistory() {
-            readingHistory = [];
-            updateHistoryDisplay();
-        }
-        
-        // ページ読み込み時に初期化
-        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
