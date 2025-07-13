@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>食堂合流システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 10px;
+            min-width: 150px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+        
+        .room-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .room-code {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .room-url {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .member-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .member {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .member.ready {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .status.ready {
+            color: #28a745;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .location-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .location-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .nfc-button {
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .qr-code-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        #qr-code {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .map-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        #location-map {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- ホーム画面 -->
+    <div class="container">
+        <div id="home-screen" class="screen active">
+            <div class="header">
+                <h1>🍽️ 社食合流システム</h1>
+                <p class="subtitle">みんなで食事を楽しもう</p>
+            </div>
+            
+            <button class="btn" onclick="showCreateRoom()">
+                グループを作成
+            </button>
+        </div>
+        
+        <!-- グループ作成画面 -->
+        <div id="create-room-screen" class="screen">
+            <div class="header">
+                <h1>グループ作成</h1>
+            </div>
+            
+            <div class="form-group">
+                <label for="creator-name">あなたの名前</label>
+                <input type="text" id="creator-name" placeholder="例：田中">
+            </div>
+                        
+            <button class="btn btn-secondary" onclick="showHome()">
+                戻る
+            </button>
+
+            <button class="btn" onclick="createRoom()">
+                グループを作成
+            </button>
+
+        </div>
+        
+        <!-- グループ参加画面 -->
+        <div id="join-room-screen" class="screen">
+            
+            <div class="form-group">
+                <label for="room-code-input">グループコード</label>
+                <input type="text" id="room-code-input" placeholder="例：ABC123">
+            </div>
+            
+            <div class="form-group">
+                <label for="member-name">あなたの名前</label>
+                <input type="text" id="member-name" placeholder="例：佐藤">
+            </div>
+            
+            <button class="btn btn-secondary" onclick="showHome()">
+                戻る
+            </button>
+        </div>
+        
+        <!-- 待機画面 -->
+        <div id="waiting-screen" class="screen">
+            <div class="header">
+                <h1>グループメンバー追加</h1>
+            </div>
+
+            <div class="room-info">
+                <p>グループURL</p>
+                <div class="room-url" id="display-room-url">XXX.com</div>
+                <div class="room-url-container">
+                    <p style="margin-top: 10px; color: #666;">URLを共有して参加してもらう</p>
+                </div>
+            </div>
+            
+            <div class="room-info">
+                <p>グループコード</p>
+                <div class="room-code" id="display-room-code">ABC123</div>
+                <div class="qr-code-container">
+                    <canvas id="qr-code" width="200" height="200"></canvas>
+                    <p style="margin-top: 10px; color: #666;">QRコードで参加してもらう</p>
+                </div>
+            </div>
+        
+
+            <div class="member-list">
+                <h3>参加メンバー</h3>
+                <div id="members-list">
+                    <!-- メンバーリストがここに表示される -->
+                </div>
+            </div>
+            
+            <button class="btn btn-success nfc-button" onclick="showNFCScreen()">
+                📱 席を確保してNFCタッチ
+            </button>
+            
+            <button class="btn btn-secondary" onclick="leaveRoom()">
+                グループから退出
+            </button>
+        </div>
+        
+        <!-- NFC読み込み画面画面 -->
+        <div id="nfc-screen" class="screen">
+            <div class="header">
+                <h1>席の確保</h1>
+                <p class="subtitle">空いている席を確保して</p>
+                <p class="subtitle">NFCタグにスマホを近づけてください</p>
+            </div>
+            
+            <div style="font-size: 4em; margin: 30px 0;">
+                📱
+            </div>
+            
+            <button class="btn btn-secondary" onclick="showWaiting()">
+                戻る
+            </button>
+
+            <button class="btn nfc-button" onclick="simulateNFC()">
+                NFCタグにタッチ
+            </button>
+
+        </div>
+
+       
+        <!-- 合流完了画面 -->
+        <div id="meetup-screen" class="screen">
+            <div class="header">
+                <h1>🎉 合流場所が決まりました！</h1>
+            </div>
+            
+            <div class="location-info">
+                <div class="location-text" id="meetup-location">
+                    テーブル A-15
+                </div>
+                <div class="map-container">
+                    <canvas id="location-map" width="300" height="200"></canvas>
+                </div>
+                <p style="margin-top: 10px;">上記の場所で合流してください</p>
+            </div>
+            
+            <div class="member-list">
+                <h3>参加メンバー</h3>
+                <div id="final-members-list">
+                    <!-- メンバーリストがここに表示される -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 通知 -->
+    <div id="notification" class="notification">
+        <div id="notification-text"></div>
+    </div>
+    
+    <script>
+        // アプリケーションの状態管理
+        let appState = {
+            currentScreen: 'home',
+            currentRoom: null,
+            currentUser: null,
+            rooms: {},
+            isCreator: false
+        };
+        
+        // 画面遷移関数
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            appState.currentScreen = screenId;
+        }
+        
+        function showHome() {
+            showScreen('home-screen');
+        }
+        
+        function showCreateRoom() {
+            showScreen('create-room-screen');
+        }
+        
+        function showJoinRoom() {
+            showScreen('join-room-screen');
+        }
+        
+        function showWaiting() {
+            showScreen('waiting-screen');
+        }
+        
+        function showNFCScreen() {
+            showScreen('nfc-screen');
+        }
+        
+        function showMeetup() {
+            showScreen('meetup-screen');
+        }
+        
+        // ランダムなルームコード生成
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        // グループ作成
+        function createRoom() {
+            const creatorName = document.getElementById('creator-name').value;
+            
+            if (!creatorName) {
+                alert('名前を入力してください');
+                return;
+            }
+            
+            const roomCode = generateRoomCode();
+            const room = {
+                code: roomCode,
+                creator: creatorName,
+                members: [{
+                    name: creatorName,
+                    ready: false,
+                    isCreator: true
+                }],
+                location: null,
+                created: new Date()
+            };
+            
+            appState.rooms[roomCode] = room;
+            appState.currentRoom = roomCode;
+            appState.currentUser = creatorName;
+            appState.isCreator = true;
+            
+            updateWaitingScreen();
+            showWaiting();
+            showNotification('グループが作成されました！');
+        }
+        
+        // グループ参加
+        function joinRoom() {
+            const roomCode = document.getElementById('room-code-input').value.toUpperCase();
+            const memberName = document.getElementById('member-name').value;
+            
+            if (!roomCode || !memberName) {
+                alert('グループコードと名前を入力してください');
+                return;
+            }
+            
+            if (!appState.rooms[roomCode]) {
+                alert('無効なグループコードです');
+                return;
+            }
+            
+            const room = appState.rooms[roomCode];
+            
+            // 既に参加しているかチェック
+            const existingMember = room.members.find(m => m.name === memberName);
+            if (existingMember) {
+                alert('同じ名前のメンバーが既に参加しています');
+                return;
+            }
+            
+            room.members.push({
+                name: memberName,
+                ready: false,
+                isCreator: false
+            });
+            
+            appState.currentRoom = roomCode;
+            appState.currentUser = memberName;
+            appState.isCreator = false;
+            
+            updateWaitingScreen();
+            showWaiting();
+            showNotification('グループに参加しました！');
+        }
+        
+        // 待機画面の更新
+        function updateWaitingScreen() {
+            const room = appState.rooms[appState.currentRoom];
+            if (!room) return;
+            
+            document.getElementById('display-room-code').textContent = room.code;
+            
+            // QRコード生成
+            generateQRCode(room.code);
+            
+            const membersList = document.getElementById('members-list');
+            membersList.innerHTML = '';
+            
+            room.members.forEach(member => {
+                const memberElement = document.createElement('div');
+                memberElement.className = `member ${member.ready ? 'ready' : ''}`;
+                memberElement.innerHTML = `
+                    <span>${member.name} ${member.isCreator ? '(代表者)' : ''}</span>
+                    <span class="status ${member.ready ? 'ready' : ''}">
+                        ${member.ready ? '✅ 準備完了' : '⏳ 料理待ち'}
+                    </span>
+                `;
+                membersList.appendChild(memberElement);
+            });
+        }
+        
+        // NFC シミュレーション
+        function simulateNFC() {
+            const room = appState.rooms[appState.currentRoom];
+            if (!room) return;
+            
+            // テーブル番号をランダムに生成
+            const tableAreas = ['A', 'B', 'C', 'D'];
+            const tableNumber = Math.floor(Math.random() * 20) + 1;
+            const location = `テーブル ${tableAreas[Math.floor(Math.random() * tableAreas.length)]}-${tableNumber}`;
+            
+            // 現在のユーザーを準備完了にする
+            const currentMember = room.members.find(m => m.name === appState.currentUser);
+            if (currentMember) {
+                currentMember.ready = true;
+            }
+            
+            // 合流場所を設定
+            room.location = location;
+            
+            // 合流完了画面を表示
+            document.getElementById('meetup-location').textContent = location;
+            updateFinalMembersList();
+            drawLocationMap(location);
+            showMeetup();
+            
+            // 他のメンバーに通知（実際の実装では WebSocket や Push API を使用）
+            setTimeout(() => {
+                showNotification(`${appState.currentUser}さんが席を確保しました！\n場所: ${location}`);
+            }, 500);
+        }
+        
+        // 最終メンバーリスト更新
+        function updateFinalMembersList() {
+            const room = appState.rooms[appState.currentRoom];
+            if (!room) return;
+            
+            const finalMembersList = document.getElementById('final-members-list');
+            finalMembersList.innerHTML = '';
+            
+            room.members.forEach(member => {
+                const memberElement = document.createElement('div');
+                memberElement.className = `member ${member.ready ? 'ready' : ''}`;
+                memberElement.innerHTML = `
+                    <span>${member.name} ${member.isCreator ? '(代表者)' : ''}</span>
+                    <span class="status ready">
+                        ${member.ready ? '✅ 席確保済み' : '🚶 向かい中'}
+                    </span>
+                `;
+                finalMembersList.appendChild(memberElement);
+            });
+        }
+        
+        // グループから退出
+        function leaveRoom() {
+            if (confirm('本当にグループから退出しますか？')) {
+                const room = appState.rooms[appState.currentRoom];
+                if (room) {
+                    room.members = room.members.filter(m => m.name !== appState.currentUser);
+                }
+                
+                appState.currentRoom = null;
+                appState.currentUser = null;
+                appState.isCreator = false;
+                
+                showHome();
+                showNotification('グループから退出しました');
+            }
+        }
+        
+        // 通知表示
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        
+        // QRコード生成（シンプルな実装）
+        function generateQRCode(text) {
+            const canvas = document.getElementById('qr-code');
+            const ctx = canvas.getContext('2d');
+            
+            // キャンバスをクリア
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // シンプルなQRコード風の表示（実際のQRコードではありません）
+            const size = 8;
+            const modules = 25;
+            const offset = (canvas.width - modules * size) / 2;
+            
+            // ランダムパターンでQRコード風に表示
+            const seed = text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            let random = seed;
+            
+            function pseudoRandom() {
+                random = (random * 9301 + 49297) % 233280;
+                return random / 233280;
+            }
+            
+            ctx.fillStyle = '#000000';
+            
+            // 位置検出パターン（左上、右上、左下の角）
+            const corners = [[0, 0], [18, 0], [0, 18]];
+            corners.forEach(([x, y]) => {
+                // 外枠
+                ctx.fillRect(offset + x * size, offset + y * size, 7 * size, 7 * size);
+                // 内側を白で塗り潰し
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(offset + (x + 1) * size, offset + (y + 1) * size, 5 * size, 5 * size);
+                // 中心を黒で塗り潰し
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(offset + (x + 2) * size, offset + (y + 2) * size, 3 * size, 3 * size);
+            });
+            
+            // データパターン
+            for (let i = 0; i < modules; i++) {
+                for (let j = 0; j < modules; j++) {
+                    // 位置検出パターンの領域をスキップ
+                    if ((i < 9 && j < 9) || (i < 9 && j >= 16) || (i >= 16 && j < 9)) {
+                        continue;
+                    }
+                    
+                    if (pseudoRandom() > 0.5) {
+                        ctx.fillRect(offset + i * size, offset + j * size, size, size);
+                    }
+                }
+            }
+        }
+        
+        // 食堂の地図を描画
+        function drawLocationMap(location) {
+            const canvas = document.getElementById('location-map');
+            const ctx = canvas.getContext('2d');
+            
+            // キャンバスをクリア
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 食堂のレイアウトを描画
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            // エリア区分線
+            ctx.beginPath();
+            ctx.moveTo(150, 0);
+            ctx.lineTo(150, 200);
+            ctx.moveTo(0, 100);
+            ctx.lineTo(300, 100);
+            ctx.stroke();
+            
+            // エリアラベル
+            ctx.fillStyle = '#666';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('A', 75, 50);
+            ctx.fillText('B', 225, 50);
+            ctx.fillText('C', 75, 150);
+            ctx.fillText('D', 225, 150);
+            
+            // テーブルを描画
+            ctx.fillStyle = '#e9ecef';
+            ctx.strokeStyle = '#adb5bd';
+            ctx.lineWidth = 1;
+            
+            // 各エリアのテーブル配置
+            const tables = [
+                // エリアA
+                { x: 30, y: 20, w: 30, h: 20, label: 'A-1' },
+                { x: 80, y: 20, w: 30, h: 20, label: 'A-2' },
+                { x: 30, y: 60, w: 30, h: 20, label: 'A-3' },
+                { x: 80, y: 60, w: 30, h: 20, label: 'A-4' },
+                // エリアB
+                { x: 180, y: 20, w: 30, h: 20, label: 'B-1' },
+                { x: 230, y: 20, w: 30, h: 20, label: 'B-2' },
+                { x: 180, y: 60, w: 30, h: 20, label: 'B-3' },
+                { x: 230, y: 60, w: 30, h: 20, label: 'B-4' },
+                // エリアC
+                { x: 30, y: 120, w: 30, h: 20, label: 'C-1' },
+                { x: 80, y: 120, w: 30, h: 20, label: 'C-2' },
+                { x: 30, y: 160, w: 30, h: 20, label: 'C-3' },
+                { x: 80, y: 160, w: 30, h: 20, label: 'C-4' },
+                // エリアD
+                { x: 180, y: 120, w: 30, h: 20, label: 'D-1' },
+                { x: 230, y: 120, w: 30, h: 20, label: 'D-2' },
+                { x: 180, y: 160, w: 30, h: 20, label: 'D-3' },
+                { x: 230, y: 160, w: 30, h: 20, label: 'D-4' }
+            ];
+            
+            tables.forEach(table => {
+                const isTarget = location.includes(table.label);
+                
+                // テーブルの色を設定
+                if (isTarget) {
+                    ctx.fillStyle = '#28a745';
+                    ctx.strokeStyle = '#1e7e34';
+                    ctx.lineWidth = 3;
+                } else {
+                    ctx.fillStyle = '#e9ecef';
+                    ctx.strokeStyle = '#adb5bd';
+                    ctx.lineWidth = 1;
+                }
+                
+                // テーブルを描画
+                ctx.fillRect(table.x, table.y, table.w, table.h);
+                ctx.strokeRect(table.x, table.y, table.w, table.h);
+                
+                // テーブル番号
+                ctx.fillStyle = isTarget ? '#ffffff' : '#495057';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(table.label, table.x + table.w/2, table.y + table.h/2 + 3);
+            });
+            
+            // 入口を表示
+            ctx.fillStyle = '#007bff';
+            ctx.fillRect(130, 190, 40, 10);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('入口', 150, 198);
+            
+            // 「現在地」マーカー（合流場所）
+            const targetTable = tables.find(t => location.includes(t.label));
+            if (targetTable) {
+                ctx.fillStyle = '#dc3545';
+                ctx.beginPath();
+                ctx.arc(targetTable.x + targetTable.w/2, targetTable.y - 10, 5, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.fillStyle = '#dc3545';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('👥', targetTable.x + targetTable.w/2, targetTable.y - 2);
+            }
+        }
+        function checkURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const joinCode = urlParams.get('join');
+            
+            if (joinCode) {
+                document.getElementById('room-code-input').value = joinCode;
+                showJoinRoom();
+            }
+        }
+        
+        // ページ読み込み時の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkURLParams();
+            
+            // デモ用のサンプルルームを作成
+            const sampleRoom = {
+                code: 'DEMO01',
+                creator: 'デモユーザー',
+                members: [
+                    { name: 'デモユーザー', ready: false, isCreator: true },
+                    { name: '田中', ready: false, isCreator: false },
+                    { name: '佐藤', ready: true, isCreator: false }
+                ],
+                location: null,
+                created: new Date()
+            };
+            
+            appState.rooms['DEMO01'] = sampleRoom;
+        });
+        
+        // Web API のサポート状況をチェック（実際の実装用）
+        function checkWebAPISupport() {
+            // NFC API サポートチェック
+            if ('NDEFReader' in window) {
+                console.log('NFC API サポートあり');
+            } else {
+                console.log('NFC API サポートなし - シミュレーションモードで動作');
+            }
+            
+            // Notification API サポートチェック
+            if ('Notification' in window) {
+                console.log('Notification API サポートあり');
+            } else {
+                console.log('Notification API サポートなし');
+            }
+        }
+        
+        checkWebAPISupport();
+    </script>
+</body>
+</html>
